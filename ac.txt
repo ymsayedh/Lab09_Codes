@@ -1,0 +1,35 @@
+* === DIFFERENTIAL AC ===
+alter VID AC = 1
+alter VICM AC = 0
+ac dec 10 1 10e9
+* === COMMON MODE AC ===
+alter VID AC = 0
+alter VICM AC = 1
+ac dec 10 1 10e9
+* === EXTRACT RESULTS ===
+set units=degrees
+let vod = ac1.v(VOUT)
+let vocm = ac2.v(VOUT)
+let CMRR = vdb(vod) - vdb(vocm)
+* === MEASUREMENTS ===
+meas ac Av_diff_db find vdb(vod) at=1
+meas ac Av_diff_mag find vmag(vod) at=1
+let A3db = Av_diff_mag/sqrt(2)
+meas ac BW_diff when vmag(vod)=A3db fall=1
+meas ac UGF when vmag(vod)=1 fall=1
+meas ac P_UGF find vp(vod) at=UGF
+let GBW = Av_diff_mag * BW_diff
+meas ac Av_CM_db find vdb(vocm) at=1
+meas ac Av_CM_mag find vmag(vocm) at=1
+let A3db = Av_CM_mag/sqrt(2)
+meas ac BW_CM when vmag(vocm)=A3db fall=1
+let CMRR_db = Av_diff_db - Av_CM_db
+* === DISPLAY RESULTS ===
+echo \" === AC Results ===\"
+echo \"Av Diff: $&Av_diff_db dB, BW: $&BW_diff Hz\"
+echo \"UGF: $&UGF Hz\"
+echo \"GBW: $&GBW Hz\""
+echo \"Av CM: $&Av_CM_db dB, BW: $&BW_CM Hz\"
+echo \"CMRR: $&CMRR_db dB\"
+write ac.raw
+.endc

@@ -1,0 +1,19 @@
+save all
+let index = 0
+compose VICM_vec start=1.2 stop=1.5 step=50m
+let GBW_vec = VICM_vec
+let Avcm_vec = VICM_vec
+setscale VICM_vec
+foreach VICM_val $&VICM_vec
+alter V4 DC=$VICM_val
+* === COMMON MODE AC ===
+alter VID AC = 0
+alter VICM AC = 1
+ac dec 10 1 10e9
+* === MEASUREMENTS ===
+meas ac Av_CM_mag find vmag(VOUT) at=1
+let Avcm_vec[index] = Av_CM_mag
+let index = index + 1
+end
+write gbw.raw 
+.endc

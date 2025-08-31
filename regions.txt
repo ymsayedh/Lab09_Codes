@@ -1,5 +1,6 @@
 .control
-save all
+save allprint 
+
 let x = 1
 set num = {$&x}
 dowhile x <= 8
@@ -19,17 +20,18 @@ let x = x + 1
 set num = {$&x}
 end
 op
-write dc_op.raw
-echo \" === Calculated Parameters ===\"
-let x = 1
-dowhile x <= 8
-set num = {$&x}
-let gmid = @m.xm{$num}.m0[gm]/@m.xm{$num}.m0[id]
-let Vstar = 2/gmid
-let ro = 1/@m.xm{$num}.m0[gds]
-echo \"M{$num}: gm/id = $&gmid S/A, Vstar = $&Vstar V, ro = $&ro ohms\"
-let x = x + 1
-end
-show m : id : gm : gds : gmbs : vgs : vth : vds : vdsat
 
-print VOUT VINN VINP VOUT1 VM
+dc VICM -0.5 1.8 0.001
+
+let x = 1
+set num = {$&x}
+dowhile x <= 8
+let m{$num}_regions=@m.x1.xm{$num}.m0[vds]-@m.x1.xm{$num}.m0[vdsat]
+let m{$num}_region = 1 + (m{$num}_regions/abs(m{$num}_regions) + 1)/2
+save m{$num}_region 
+let x = x + 1
+set num = {$&x}
+end
+
+write resgion.raw
+.endc
