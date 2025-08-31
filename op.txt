@@ -31,4 +31,5 @@ echo \"M{$num}: gm/id = $&gmid S/A, Vstar = $&Vstar V, ro = $&ro ohms\"
 let x = x + 1
 end
 show m : id : gm : gds : gmbs : vgs : vth : vds : vdsat
+
 print VOUT VINN VINP VOUT1 VM
